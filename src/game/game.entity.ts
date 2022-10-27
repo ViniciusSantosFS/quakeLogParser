@@ -1,4 +1,5 @@
 import { GameDto } from './game.dto';
+import { RankingDto } from 'src/player/ranking.dto';
 
 const PLAYER_NAME = /ClientUserinfoChanged: [0-9]* n\\(.*)\\t\\[0-9]+\\model/;
 const FIGHTERS_NAME = /Kill: [0-9 ]*: (.*) killed (.*) by/;
@@ -6,13 +7,13 @@ const FIGHTERS_NAME = /Kill: [0-9 ]*: (.*) killed (.*) by/;
 export class Game {
   private totalKills: number;
   private players: string[];
-  private kills: Map<string, number>;
+  private scores: Map<string, number>;
   private amountKillsReasons: Map<string, number>;
 
   constructor(gameLog = []) {
     this.totalKills = 0;
     this.players = [];
-    this.kills = new Map<string, number>();
+    this.scores = new Map<string, number>();
     this.amountKillsReasons = new Map<string, number>();
 
     this.create(gameLog);
@@ -42,7 +43,7 @@ export class Game {
 
     if (!havePlayer) {
       this.players.push(playerName);
-      this.kills.set(playerName, 0);
+      this.scores.set(playerName, 0);
     }
   }
 
@@ -54,13 +55,13 @@ export class Game {
       this.countKillReasons(fighters);
 
       if (fighters[1] === '<world>') {
-        const playerKills = this.kills.get(fighters[2]);
-        this.kills.set(fighters[2], playerKills - 1);
+        const playerKills = this.scores.get(fighters[2]);
+        this.scores.set(fighters[2], playerKills - 1);
       }
 
       if (fighters[1] !== fighters[2]) {
-        const playerKills = this.kills.get(fighters[1]);
-        this.kills.set(fighters[1], playerKills + 1);
+        const playerKills = this.scores.get(fighters[1]);
+        this.scores.set(fighters[1], playerKills + 1);
       }
     }
   }
@@ -82,12 +83,18 @@ export class Game {
       .split(' ')[0];
   }
 
+  getRanking() {
+    return new RankingDto({
+      players: this.players,
+      scores: Object.fromEntries(this.scores),
+    });
+  }
+
   getGame() {
     return new GameDto({
       totalKills: this.totalKills,
-      players: this.players,
-      kills: Object.fromEntries(this.kills),
       amountKillsReasons: Object.fromEntries(this.amountKillsReasons),
+      kills: 0,
     });
   }
 }
