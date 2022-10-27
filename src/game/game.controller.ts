@@ -8,4 +8,9 @@ export class GameController {
   getKills(): any {
     return this.gameService.getGames();
   }
+
+  @Get('rankings')
+  getRanking(): any {
+    return this.gameService.getRankings();
+  }
 }

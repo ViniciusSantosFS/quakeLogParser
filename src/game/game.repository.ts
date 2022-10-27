@@ -9,6 +9,7 @@ const LINE_COMMAND = /^.{0,7}([a-z A-Z][^:]*)/;
 export class GameRepository {
   private logPath = `${__dirname}/../games.log`;
   private games = [];
+  private rakings = [];
 
   constructor() {
     this.readFile();
@@ -40,6 +41,7 @@ export class GameRepository {
         if (gameEnded) {
           const game = new Game(gameLog);
           this.games.push({ ...game.getGame(), id: charId });
+          this.rakings.push({ ...game.getRanking(), id: charId });
           charId++;
         }
       }
@@ -48,5 +50,9 @@ export class GameRepository {
 
   getGames() {
     return this.games;
+  }
+
+  getRankings() {
+    return this.rakings;
   }
 }

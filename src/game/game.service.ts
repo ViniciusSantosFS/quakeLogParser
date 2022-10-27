@@ -9,4 +9,8 @@ export class GameService {
   getGames() {
     return this.gameRepository.getGames();
   }
+
+  getRankings() {
+    return this.gameRepository.getRankings();
+  }
 }
