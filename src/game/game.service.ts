@@ -15,7 +15,8 @@ export class GameService {
       .readFileSync(`${__dirname}/../games.log`)
       .toString()
       .split('\n');
-    this.parseLines(lines);
+
+    return this.parseLines(lines);
   }
 
   parseLines(lines: string[]) {
@@ -25,12 +26,13 @@ export class GameService {
       const command = lines[i].match(GET_LINE_COMMAND);
 
       if (command) {
-        this.checkCommand(command[1], lines[i], i);
+        const commandTitle = command[1];
+        this.checkCommand(commandTitle, lines[i]);
       }
     }
   }
 
-  checkCommand(command, line, id) {
+  checkCommand(command: string, line: string) {
     if (command === 'Kill') {
       this.gameRepository.addKills();
       this.gameRepository.addTypeOfDeath(line);
