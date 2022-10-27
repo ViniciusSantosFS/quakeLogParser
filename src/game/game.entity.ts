@@ -1,20 +1,17 @@
+import { Player } from 'src/player/player.entity';
 import { GameDto } from './game.dto';
-import { RankingDto } from 'src/player/ranking.dto';
 
-const PLAYER_NAME = /ClientUserinfoChanged: [0-9]* n\\(.*)\\t\\[0-9]+\\model/;
 const FIGHTERS_NAME = /Kill: [0-9 ]*: (.*) killed (.*) by/;
 
 export class Game {
   private totalKills: number;
-  private players: string[];
-  private scores: Map<string, number>;
   private amountKillsReasons: Map<string, number>;
+  private kills: Map<string, number>;
 
-  constructor(gameLog = []) {
+  constructor(private readonly player: Player, gameLog = []) {
     this.totalKills = 0;
-    this.players = [];
-    this.scores = new Map<string, number>();
     this.amountKillsReasons = new Map<string, number>();
+    this.kills = new Map<string, number>();
 
     this.create(gameLog);
   }
@@ -30,38 +27,18 @@ export class Game {
 
   handleCommand(command: string, line: string) {
     if (command === 'ClientUserinfoChanged') {
-      this.addPlayer(line);
+      this.player.addPlayer(line);
     }
 
-    if (command == 'Kill') this.handleKill(line);
-  }
-
-  addPlayer(line: string) {
-    const playerName = line.match(PLAYER_NAME)[1];
-
-    const havePlayer = this.players.find((player) => player === playerName);
-
-    if (!havePlayer) {
-      this.players.push(playerName);
-      this.scores.set(playerName, 0);
-    }
-  }
-
-  handleKill(line: string): void {
-    const fighters = line.match(FIGHTERS_NAME);
-
-    if (fighters) {
+    if (command == 'Kill') {
       this.totalKills += 1;
-      this.countKillReasons(fighters);
 
-      if (fighters[1] === '<world>') {
-        const playerKills = this.scores.get(fighters[2]);
-        this.scores.set(fighters[2], playerKills - 1);
-      }
+      const fighters = line.match(FIGHTERS_NAME);
 
-      if (fighters[1] !== fighters[2]) {
-        const playerKills = this.scores.get(fighters[1]);
-        this.scores.set(fighters[1], playerKills + 1);
+      if (fighters) {
+        this.player.handleKill(fighters);
+        this.countKillReasons(fighters);
+        this.countKillBy(fighters);
       }
     }
   }
@@ -69,9 +46,13 @@ export class Game {
   countKillReasons(fighters: RegExpMatchArray) {
     const reason = this.getKillReason(fighters.input);
     const killReason = this.amountKillsReasons.get(reason);
-    const convertToNumber = isNaN(killReason) ? 0 : killReason + 1;
 
-    this.amountKillsReasons.set(reason, convertToNumber);
+    this.amountKillsReasons.set(reason, this.parseNumber(killReason));
+  }
+
+  countKillBy(fighters: RegExpMatchArray): void {
+    const playerKills = this.kills.get(fighters[1]);
+    this.kills.set(fighters[1], this.parseNumber(playerKills));
   }
 
   getKillReason(fightersInput: string) {
@@ -83,18 +64,15 @@ export class Game {
       .split(' ')[0];
   }
 
-  getRanking() {
-    return new RankingDto({
-      players: this.players,
-      scores: Object.fromEntries(this.scores),
-    });
+  parseNumber(value: number | undefined) {
+    return isNaN(value) ? 0 : value + 1;
   }
 
   getGame() {
     return new GameDto({
       totalKills: this.totalKills,
       amountKillsReasons: Object.fromEntries(this.amountKillsReasons),
-      kills: 0,
+      kills: Object.fromEntries(this.kills),
     });
   }
 }
