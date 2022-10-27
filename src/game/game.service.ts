@@ -6,8 +6,12 @@ import { GameRepository } from './game.repository';
 export class GameService {
   constructor(private readonly gameRepository: GameRepository) {}
 
-  getGames() {
+  findAll() {
     return this.gameRepository.getGames();
+  }
+
+  getBy(id: number) {
+    return this.gameRepository.findOne(id);
   }
 
   getRankings() {

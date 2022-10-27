@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Game } from './game.entity';
 import * as fs from 'fs';
+import { Player } from 'src/player/player.entity';
 
 const LINE_HAS_HYPHENS = /(-)\1+/;
 const LINE_COMMAND = /^.{0,7}([a-z A-Z][^:]*)/;
@@ -39,13 +40,20 @@ export class GameRepository {
         gameLog.push(command);
 
         if (gameEnded) {
-          const game = new Game(gameLog);
+          const player = new Player();
+          const game = new Game(player, gameLog);
+
           this.games.push({ ...game.getGame(), id: charId });
-          this.rakings.push({ ...game.getRanking(), id: charId });
+          this.rakings.push({ ...player.getRanking(), id: charId });
+
           charId++;
         }
       }
     }
+  }
+
+  findOne(id: number) {
+    return this.games.filter((game) => game.id === id);
   }
 
   getGames() {
