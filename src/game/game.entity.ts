@@ -7,11 +7,13 @@ export class Game {
   private totalKills: number;
   private players: string[];
   private kills: Map<string, number>;
+  private amountKillsReasons: Map<string, number>;
 
   constructor(gameLog = []) {
     this.totalKills = 0;
     this.players = [];
     this.kills = new Map<string, number>();
+    this.amountKillsReasons = new Map<string, number>();
 
     this.create(gameLog);
   }
@@ -49,6 +51,7 @@ export class Game {
 
     if (fighters) {
       this.totalKills += 1;
+      this.countKillReasons(fighters);
 
       if (fighters[1] === '<world>') {
         const playerKills = this.kills.get(fighters[2]);
@@ -57,10 +60,26 @@ export class Game {
 
       if (fighters[1] !== fighters[2]) {
         const playerKills = this.kills.get(fighters[1]);
-
         this.kills.set(fighters[1], playerKills + 1);
       }
     }
+  }
+
+  countKillReasons(fighters: RegExpMatchArray) {
+    const reason = this.getKillReason(fighters.input);
+    const killReason = this.amountKillsReasons.get(reason);
+    const convertToNumber = isNaN(killReason) ? 0 : killReason + 1;
+
+    this.amountKillsReasons.set(reason, convertToNumber);
+  }
+
+  getKillReason(fightersInput: string) {
+    return fightersInput
+      .split('')
+      .reverse()
+      .join('')
+      .replace(/','/g, '')
+      .split(' ')[0];
   }
 
   getGame() {
@@ -68,6 +87,7 @@ export class Game {
       totalKills: this.totalKills,
       players: this.players,
       kills: Object.fromEntries(this.kills),
+      amountKillsReasons: Object.fromEntries(this.amountKillsReasons),
     });
   }
 }
