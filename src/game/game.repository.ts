@@ -16,13 +16,13 @@ export class GameRepository {
 
   readFile() {
     const lines = fs.readFileSync(this.logPath).toString().split('\n');
-
     return this.parseLines(lines);
   }
 
   parseLines(lines: string[]) {
     let gameLog = [];
     const lastLine = lines.length;
+    let charId = 1;
 
     for (let i = 0; i < lastLine; i++) {
       const command = lines[i].match(LINE_COMMAND);
@@ -39,7 +39,8 @@ export class GameRepository {
 
         if (gameEnded) {
           const game = new Game(gameLog);
-          this.games.push(game.getGame());
+          this.games.push({ ...game.getGame(), id: charId });
+          charId++;
         }
       }
     }
