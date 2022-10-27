@@ -7,14 +7,12 @@ $ npm install
 ### Rode um build do projeto
 
 ```bash
-# development
 $ npm run build
 ```
 
 ### Para iniciar a aplicação em modo de desenvolvimento
 
 ```bash
-# development
 $ npm run start
 
 # watch mode
