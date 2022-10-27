@@ -1,17 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
+import { GetKillersDto, GetKillsDto, GetTypeOfDeathsDto } from './game.dto';
 import { GameService } from './game.service';
-
-interface GetKillsDto {
-  kills: number;
-}
-
-interface GetKillersDto {
-  killers: string[];
-}
-
-interface GetTypeOfDeathsDto {
-  deathsBy: string[];
-}
 
 @Controller()
 export class GameController {
