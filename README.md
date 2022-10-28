@@ -34,7 +34,7 @@ $ npm run start:prod
 
 ---
 
-![Game](./assets/games.png)
+![Game](./assets/game.png)
 
 ---
 
