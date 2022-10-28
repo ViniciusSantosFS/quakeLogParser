@@ -43,8 +43,8 @@ export class GameRepository {
           const player = new Player();
           const game = new Game(player, gameLog);
 
-          this.games.push({ ...game.getGame(), id: charId });
-          this.rakings.push({ ...player.getRanking(), id: charId });
+          this.games.push({ id: charId, ...game.getGame() });
+          this.rakings.push({ id: charId, ...player.getRanking() });
 
           charId++;
         }
