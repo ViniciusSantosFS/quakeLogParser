@@ -25,3 +25,17 @@ $ npm run start:dev
 ```bash
 $ npm run start:prod
 ```
+
+#### Imagens
+
+![Swagger](./assets/swagger.png)
+
+![Games](./assets/games.png)
+
+---
+
+![Game](./assets/games.png)
+
+---
+
+![Rankings](./assets/rankings.png)
