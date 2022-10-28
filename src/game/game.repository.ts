@@ -53,7 +53,7 @@ export class GameRepository {
   }
 
   findOne(id: number) {
-    return this.games.filter((game) => game.id === id);
+    return this.games.find((game) => game.id === id);
   }
 
   getGames() {
