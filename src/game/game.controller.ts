@@ -8,6 +8,12 @@ import { RankingDto } from 'src/player/ranking.dto';
 @Controller('games')
 export class GameController {
   constructor(private readonly gameService: GameService) {}
+  @Get('rankings')
+  @ApiOkResponse({ type: [RankingDto] })
+  getRanking(): RankingDto[] {
+    return this.gameService.getRankings();
+  }
+
   @Get()
   @ApiOkResponse({ type: [GameDto] })
   getGames(): GameDto[] {
@@ -19,11 +25,5 @@ export class GameController {
   getGame(@Param() params: { id: string }): GameDto {
     const { id } = params;
     return this.gameService.getBy(parseInt(id));
-  }
-
-  @Get('rankings')
-  @ApiOkResponse({ type: [RankingDto] })
-  getRanking(): RankingDto[] {
-    return this.gameService.getRankings();
   }
 }
