@@ -1,7 +1,14 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class GameDto {
+  @ApiProperty()
   totalKills: number;
-  kills: object;
-  amountKillsReasons: object;
+
+  @ApiProperty()
+  kills: { [key: string]: number };
+
+  @ApiProperty()
+  amountKillsReasons: { [key: string]: number };
 
   constructor({ totalKills, amountKillsReasons, kills }) {
     this.totalKills = totalKills;

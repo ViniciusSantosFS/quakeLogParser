@@ -1,6 +1,11 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export class RankingDto {
+  @ApiProperty()
   players: string[];
-  scores: object;
+
+  @ApiProperty()
+  scores: { [key: string]: number };
 
   constructor({ players, scores }) {
     this.players = players;
