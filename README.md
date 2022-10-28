@@ -39,3 +39,7 @@ $ npm run start:prod
 ---
 
 ![Rankings](./assets/rankings.png)
+
+### Observações
+
+- Gostaria de agradecer pela compreensão quanto ao prazo de entrega
